@@ -52,7 +52,8 @@ async function main() {
     // 3: Cod Preinsc
     // 4: Nombre
     // 5: CI
-    // 6: GRUPO (Nuevo)
+    // 6: Genero (Skip)
+    // 7: GRUPO (Actual)
     
     const nroVal = row.getCell(1).value
     const nro = typeof nroVal === 'number' ? nroVal : parseInt(String(nroVal)) || null
@@ -61,7 +62,7 @@ async function main() {
     const codPreinsc = row.getCell(3).text?.trim().toUpperCase()
     const nombrePostulante = row.getCell(4).text?.trim().toUpperCase()
     const ci = row.getCell(5).text?.trim()
-    const grupo = row.getCell(6).text?.trim().toUpperCase() || null
+    const grupo = row.getCell(7).text?.trim().toUpperCase() || null
 
     if (!codPreinsc || !ci) {
        // Skip empty rows usually found at end of excel
