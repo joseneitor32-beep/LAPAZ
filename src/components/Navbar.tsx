@@ -4,8 +4,10 @@ import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
-import { Sword, LogOut, Upload, Menu, X } from 'lucide-react'
+import { Sword, LogOut, Upload, Menu, X, User } from 'lucide-react'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 
 export default function Navbar() {
   const { data: session } = useSession()
@@ -15,22 +17,24 @@ export default function Navbar() {
   if (!session) return null
 
   return (
-    <nav className="border-b border-red-900 bg-slate-900 shadow-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          <div className="flex">
-            <div className="flex flex-shrink-0 items-center">
-              <Sword className="h-8 w-8 text-red-600 mr-2" />
-              <span className="text-xl font-bold tracking-wider text-white">ARES</span>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <Link href="/postulantes" className="flex flex-shrink-0 items-center gap-2 group">
+              <div className="rounded-lg bg-red-900/20 p-1.5 ring-1 ring-red-900/50 transition-colors group-hover:bg-red-900/30">
+                <Sword className="h-6 w-6 text-red-500" />
+              </div>
+              <span className="text-xl font-bold tracking-wider text-slate-100 group-hover:text-white transition-colors">ARES</span>
+            </Link>
+            <div className="hidden md:ml-10 md:flex md:space-x-8">
               <Link
                 href="/postulantes"
                 className={clsx(
                   "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors",
                   pathname === '/postulantes'
                     ? "border-red-500 text-white"
-                    : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-300"
+                    : "border-transparent text-slate-400 hover:border-slate-700 hover:text-slate-300"
                 )}
               >
                 Postulantes
@@ -42,7 +46,7 @@ export default function Navbar() {
                     "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors",
                     pathname === '/import'
                       ? "border-red-500 text-white"
-                      : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-300"
+                      : "border-transparent text-slate-400 hover:border-slate-700 hover:text-slate-300"
                   )}
                 >
                   Importar
@@ -51,23 +55,34 @@ export default function Navbar() {
             </div>
           </div>
           
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <span className="mr-4 text-sm text-gray-400">
-              {session.user.username} <span className="text-red-500">[{session.user.role}]</span>
-            </span>
-            <button
+          <div className="hidden md:flex md:items-center md:gap-4">
+            <div className="flex items-center gap-3 rounded-full border border-slate-800 bg-slate-900/50 px-4 py-1.5">
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-medium text-slate-200 leading-none">
+                  {session.user.username}
+                </span>
+              </div>
+              <Badge variant={session.user.role === 'ADMIN' ? 'admin' : 'inspectoria'}>
+                {session.user.role}
+              </Badge>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="flex items-center gap-2 rounded-md bg-red-900/20 px-3 py-2 text-sm font-medium text-red-400 hover:bg-red-900/40 hover:text-red-300 transition-colors"
+              className="text-slate-400 hover:text-red-400 hover:bg-red-900/10"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4 mr-2" />
               Salir
-            </button>
+            </Button>
           </div>
 
-          <div className="-mr-2 flex items-center sm:hidden">
-            <button
+          <div className="-mr-2 flex items-center md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
+              className="text-slate-400 hover:text-white"
             >
               <span className="sr-only">Abrir menú</span>
               {isOpen ? (
@@ -75,21 +90,26 @@ export default function Navbar() {
               ) : (
                 <Menu className="block h-6 w-6" aria-hidden="true" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <div className={clsx("sm:hidden", isOpen ? "block" : "hidden")}>
-        <div className="space-y-1 pb-3 pt-2">
+      <div 
+        className={clsx(
+          "md:hidden absolute w-full bg-slate-950 border-b border-slate-800 shadow-xl transition-all duration-300 ease-in-out origin-top",
+          isOpen ? "max-h-96 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2 overflow-hidden"
+        )}
+      >
+        <div className="space-y-1 px-4 pb-3 pt-2">
           <Link
             href="/postulantes"
             className={clsx(
-              "block border-l-4 py-2 pl-3 pr-4 text-base font-medium",
+              "block rounded-md px-3 py-2 text-base font-medium transition-colors",
               pathname === '/postulantes'
-                ? "border-red-500 bg-slate-800 text-white"
-                : "border-transparent text-gray-400 hover:border-gray-300 hover:bg-gray-800 hover:text-white"
+                ? "bg-red-900/20 text-red-400"
+                : "text-slate-400 hover:bg-slate-800 hover:text-white"
             )}
             onClick={() => setIsOpen(false)}
           >
@@ -99,10 +119,10 @@ export default function Navbar() {
             <Link
               href="/import"
               className={clsx(
-                "block border-l-4 py-2 pl-3 pr-4 text-base font-medium",
+                "block rounded-md px-3 py-2 text-base font-medium transition-colors",
                 pathname === '/import'
-                  ? "border-red-500 bg-slate-800 text-white"
-                  : "border-transparent text-gray-400 hover:border-gray-300 hover:bg-gray-800 hover:text-white"
+                  ? "bg-red-900/20 text-red-400"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
               )}
               onClick={() => setIsOpen(false)}
             >
@@ -110,20 +130,32 @@ export default function Navbar() {
             </Link>
           )}
         </div>
-        <div className="border-t border-gray-800 pb-3 pt-4">
-          <div className="flex items-center px-4">
-            <div className="ml-3">
-              <div className="text-base font-medium text-white">{session.user.username}</div>
-              <div className="text-sm font-medium text-gray-500">{session.user.role}</div>
+        <div className="border-t border-slate-800 pb-3 pt-4 bg-slate-900/30">
+          <div className="flex items-center px-4 mb-3 justify-between">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-slate-400">
+                  <User className="h-5 w-5" />
+                </div>
+              </div>
+              <div className="ml-3">
+                <div className="text-base font-medium text-white">{session.user.username}</div>
+                <div className="text-sm font-medium text-slate-500">{session.user.role}</div>
+              </div>
             </div>
+            <Badge variant={session.user.role === 'ADMIN' ? 'admin' : 'inspectoria'}>
+                {session.user.role}
+            </Badge>
           </div>
-          <div className="mt-3 space-y-1 px-2">
-            <button
+          <div className="mt-3 px-2">
+            <Button
+              variant="destructive"
+              className="w-full justify-start"
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-gray-400 hover:bg-gray-800 hover:text-white"
             >
+              <LogOut className="mr-2 h-4 w-4" />
               Cerrar Sesión
-            </button>
+            </Button>
           </div>
         </div>
       </div>
