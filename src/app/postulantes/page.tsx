@@ -42,6 +42,15 @@ export default function PostulantesPage() {
     }
   }
 
+  // Helper function to format Group display
+  const getGroupLabel = (grupo: string | null) => {
+    if (!grupo) return 'SIN GRUPO';
+    const grupoUpper = grupo.toUpperCase();
+    if (grupoUpper.includes('1') || grupoUpper === 'UNO') return 'GRUPO UNO';
+    if (grupoUpper.includes('2') || grupoUpper === 'DOS') return 'GRUPO DOS';
+    return grupo; // Fallback to raw value
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
@@ -104,12 +113,12 @@ export default function PostulantesPage() {
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300 font-medium">{item.unidad}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm">
                         <span className={clsx(
-                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                          item.grupo?.includes('1') ? "bg-blue-900 text-blue-200" :
-                          item.grupo?.includes('2') ? "bg-purple-900 text-purple-200" :
-                          "bg-gray-800 text-gray-300"
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide",
+                          getGroupLabel(item.grupo) === 'GRUPO UNO' ? "bg-blue-900/50 text-blue-200 border border-blue-800" :
+                          getGroupLabel(item.grupo) === 'GRUPO DOS' ? "bg-purple-900/50 text-purple-200 border border-purple-800" :
+                          "bg-gray-800 text-gray-400 border border-gray-700"
                         )}>
-                           {item.grupo || 'S/G'}
+                           {getGroupLabel(item.grupo)}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-yellow-500">{item.codPreinsc}</td>
@@ -139,12 +148,12 @@ export default function PostulantesPage() {
                         <div className="mb-2 flex items-center justify-between border-b border-gray-800 pb-2">
                             <span className="font-mono text-sm text-yellow-500">{item.codPreinsc}</span>
                             <span className={clsx(
-                                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                                item.grupo?.includes('1') ? "bg-blue-900 text-blue-200" :
-                                item.grupo?.includes('2') ? "bg-purple-900 text-purple-200" :
-                                "bg-gray-800 text-gray-300"
+                                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold tracking-wide",
+                                getGroupLabel(item.grupo) === 'GRUPO UNO' ? "bg-blue-900/50 text-blue-200 border border-blue-800" :
+                                getGroupLabel(item.grupo) === 'GRUPO DOS' ? "bg-purple-900/50 text-purple-200 border border-purple-800" :
+                                "bg-gray-800 text-gray-400 border border-gray-700"
                             )}>
-                                {item.grupo || 'S/G'}
+                                {getGroupLabel(item.grupo)}
                             </span>
                         </div>
                         <div className="mb-2">
