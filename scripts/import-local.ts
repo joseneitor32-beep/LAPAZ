@@ -11,6 +11,7 @@ const PostulanteSchema = z.object({
   codPreinsc: z.string().min(1),
   nombrePostulante: z.string().min(1),
   ci: z.string().min(1),
+  grupo: z.string().nullable().optional(),
 });
 
 async function main() {
@@ -51,6 +52,7 @@ async function main() {
     // 3: Cod Preinsc
     // 4: Nombre
     // 5: CI
+    // 6: GRUPO (Nuevo)
     
     const nroVal = row.getCell(1).value
     const nro = typeof nroVal === 'number' ? nroVal : parseInt(String(nroVal)) || null
@@ -59,6 +61,7 @@ async function main() {
     const codPreinsc = row.getCell(3).text?.trim().toUpperCase()
     const nombrePostulante = row.getCell(4).text?.trim().toUpperCase()
     const ci = row.getCell(5).text?.trim()
+    const grupo = row.getCell(6).text?.trim().toUpperCase() || null
 
     if (!codPreinsc || !ci) {
        // Skip empty rows usually found at end of excel
@@ -72,6 +75,7 @@ async function main() {
       codPreinsc,
       nombrePostulante,
       ci,
+      grupo,
     })
   })
 
@@ -85,6 +89,7 @@ async function main() {
       codPreinsc: row.codPreinsc,
       nombrePostulante: row.nombrePostulante,
       ci: row.ci,
+      grupo: row.grupo,
     })
 
     if (!validation.success) {
@@ -94,8 +99,6 @@ async function main() {
     }
 
     try {
-      // Since we cleared the table, we can just create. 
-      // But keeping upsert is safer in case we run it multiple times without clearing or if there are duplicates in the excel itself.
       const existing = await prisma.postulante.findUnique({
         where: { codPreinsc: row.codPreinsc }
       })

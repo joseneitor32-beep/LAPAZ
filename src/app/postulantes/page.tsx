@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/Navbar'
 import { useState, useEffect } from 'react'
-import { Search, ChevronLeft, ChevronRight, FileDown } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, User, Shield, Users } from 'lucide-react'
 import clsx from 'clsx'
 
 export default function PostulantesPage() {
@@ -43,14 +43,14 @@ export default function PostulantesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
+    <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Listado de Postulantes</h1>
-          <div className="flex items-center space-x-2">
-             {/* Optional: CSV Export button could go here */}
-          </div>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-red-500 uppercase tracking-wider">
+            <Shield className="h-8 w-8" />
+            Listado de Postulantes
+          </h1>
         </div>
 
         <div className="mb-6">
@@ -60,7 +60,7 @@ export default function PostulantesPage() {
             </div>
             <input
               type="text"
-              className="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 py-2 border"
+              className="block w-full rounded-lg border border-gray-700 bg-slate-900 pl-10 py-3 text-white placeholder-gray-400 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
               placeholder="Buscar por CI, Nombre, Unidad o Código..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -68,75 +68,123 @@ export default function PostulantesPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-lg bg-white shadow">
+        {/* Desktop View */}
+        <div className="hidden overflow-hidden rounded-lg border border-gray-800 bg-slate-900 shadow shadow-red-900/10 md:block">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-800">
+              <thead className="bg-slate-950">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">N°</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Unidad</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Código</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nombre</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">C.I.</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">N°</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">Unidad</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">Grupo</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">Código</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">Nombre</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-red-500">C.I.</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-800 bg-slate-900">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                      Cargando...
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-400">
+                      <div className="flex justify-center">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
+                      </div>
                     </td>
                   </tr>
                 ) : data.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-400">
                       No se encontraron resultados.
                     </td>
                   </tr>
                 ) : (
                   data.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{item.nro || '-'}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{item.unidad}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{item.codPreinsc}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{item.nombrePostulante}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{item.ci}</td>
+                    <tr key={item.id} className="hover:bg-slate-800/50 transition-colors">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-400">{item.nro || '-'}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-300 font-medium">{item.unidad}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm">
+                        <span className={clsx(
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                          item.grupo?.includes('1') ? "bg-blue-900 text-blue-200" :
+                          item.grupo?.includes('2') ? "bg-purple-900 text-purple-200" :
+                          "bg-gray-800 text-gray-300"
+                        )}>
+                           {item.grupo || 'S/G'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-yellow-500">{item.codPreinsc}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-white">{item.nombrePostulante}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-400">{item.ci}</td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Mostrando <span className="font-medium">{(meta.page - 1) * meta.limit + 1}</span> a <span className="font-medium">{Math.min(meta.page * meta.limit, meta.total)}</span> de <span className="font-medium">{meta.total}</span> resultados
+        {/* Mobile View (Cards) */}
+        <div className="space-y-4 md:hidden">
+            {loading ? (
+                <div className="flex justify-center py-8">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
+                </div>
+            ) : data.length === 0 ? (
+                <div className="rounded-lg bg-slate-900 p-6 text-center text-gray-400 border border-gray-800">
+                    No se encontraron resultados.
+                </div>
+            ) : (
+                data.map((item) => (
+                    <div key={item.id} className="rounded-lg border border-gray-800 bg-slate-900 p-4 shadow-sm">
+                        <div className="mb-2 flex items-center justify-between border-b border-gray-800 pb-2">
+                            <span className="font-mono text-sm text-yellow-500">{item.codPreinsc}</span>
+                            <span className={clsx(
+                                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+                                item.grupo?.includes('1') ? "bg-blue-900 text-blue-200" :
+                                item.grupo?.includes('2') ? "bg-purple-900 text-purple-200" :
+                                "bg-gray-800 text-gray-300"
+                            )}>
+                                {item.grupo || 'S/G'}
+                            </span>
+                        </div>
+                        <div className="mb-2">
+                            <h3 className="font-medium text-white">{item.nombrePostulante}</h3>
+                            <p className="text-xs text-gray-500">CI: {item.ci}</p>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-gray-400">
+                            <span className="flex items-center gap-1">
+                                <Users className="h-3 w-3" /> {item.unidad}
+                            </span>
+                            <span>#{item.nro || '-'}</span>
+                        </div>
+                    </div>
+                ))
+            )}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-6 flex items-center justify-between border-t border-gray-800 pt-4">
+            <div className="hidden sm:block">
+                <p className="text-sm text-gray-400">
+                  Mostrando <span className="font-medium text-white">{(meta.page - 1) * meta.limit + 1}</span> a <span className="font-medium text-white">{Math.min(meta.page * meta.limit, meta.total)}</span> de <span className="font-medium text-white">{meta.total}</span> resultados
                 </p>
-              </div>
-              <div>
-                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                  <button
+            </div>
+            <div className="flex flex-1 justify-between sm:justify-end gap-2">
+                <button
                     onClick={() => handlePageChange(meta.page - 1)}
                     disabled={meta.page === 1}
-                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-                  >
-                    <span className="sr-only">Anterior</span>
-                    <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                  <button
+                    className="relative inline-flex items-center rounded-md border border-gray-700 bg-slate-900 px-4 py-2 text-sm font-medium text-gray-300 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+                </button>
+                <button
                     onClick={() => handlePageChange(meta.page + 1)}
                     disabled={meta.page === meta.lastPage}
-                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-                  >
-                    <span className="sr-only">Siguiente</span>
-                    <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                </nav>
-              </div>
+                    className="relative inline-flex items-center rounded-md border border-gray-700 bg-slate-900 px-4 py-2 text-sm font-medium text-gray-300 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Siguiente <ChevronRight className="ml-1 h-4 w-4" />
+                </button>
             </div>
-          </div>
         </div>
       </div>
     </div>
