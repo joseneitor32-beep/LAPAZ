@@ -15,7 +15,8 @@ const PostulanteSchema = z.object({
 });
 
 async function main() {
-  const filePath = path.join(process.cwd(), 'LAPAZ.xlsx')
+  // CHANGED: File name
+  const filePath = path.join(process.cwd(), 'GRUPO 3 Y 4.xlsx')
   console.log(`Reading file: ${filePath}`)
 
   const workbook = new ExcelJS.Workbook()
@@ -27,10 +28,10 @@ async function main() {
     process.exit(1)
   }
 
-  // CLEAR EXISTING DATA
-  console.log('Clearing existing Postulante data...')
-  await prisma.postulante.deleteMany({})
-  console.log('Previous data cleared.')
+  // CHANGED: Commented out deleteMany to APPEND/UPDATE data instead of replacing
+  // console.log('Clearing existing Postulante data...')
+  // await prisma.postulante.deleteMany({})
+  // console.log('Previous data cleared.')
 
   console.log(`Worksheet loaded. Processing rows...`)
 
@@ -46,14 +47,15 @@ async function main() {
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber === 1) return // Skip header
 
-    // Adjust these indices based on the actual file columns if needed
+    // Mapping for "GRUPO 3 Y 4.xlsx"
     // 1: Nro
     // 2: Unidad
     // 3: Cod Preinsc
     // 4: Nombre
     // 5: CI
-    // 6: Genero (Skip)
-    // 7: GRUPO (Actual)
+    // 6: Genero
+    // 7: Extra (CI copy?)
+    // 8: GRUPO
     
     const nroVal = row.getCell(1).value
     const nro = typeof nroVal === 'number' ? nroVal : parseInt(String(nroVal)) || null
@@ -62,10 +64,10 @@ async function main() {
     const codPreinsc = row.getCell(3).text?.trim().toUpperCase()
     const nombrePostulante = row.getCell(4).text?.trim().toUpperCase()
     const ci = row.getCell(5).text?.trim()
-    const grupo = row.getCell(7).text?.trim().toUpperCase() || null
+    // CHANGED: Group is in column 8
+    const grupo = row.getCell(8).text?.trim().toUpperCase() || null
 
     if (!codPreinsc || !ci) {
-       // Skip empty rows usually found at end of excel
        return 
     }
 
